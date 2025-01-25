@@ -7,7 +7,10 @@ class Keyboard {
         this.height = this.end_y - this.start_y;
         this.offset = offset;
         this.currently_sounding = new Set();
-        this.polySynth = new p5.PolySynth();
+        this.synths = {};
+        for (let key = Math.floor(this.left_key()); key <= Math.ceil(this.right_key()); ++key) {
+            this.synths[key] = new p5.MonoSynth();
+        }
     }
 
     left_key() {
@@ -107,11 +110,10 @@ class Keyboard {
     }
 
     update_sounds(should_be_sounding) {
-        console.log(this.currently_sounding, this.polySynth.notes);
         for (let note of this.currently_sounding) {
             if (!should_be_sounding.has(note)) {
                 if (this.currently_sounding.has(note)) {
-                    this.polySynth.noteRelease(midiToFreq(note));
+                    this.synths[note].triggerRelease();
                     this.currently_sounding.delete(note);
                 }
             }
@@ -119,7 +121,7 @@ class Keyboard {
 
         for (let note of should_be_sounding) {
             if (!this.currently_sounding.has(note)) {
-                this.polySynth.noteAttack(midiToFreq(note), 0.2);
+                this.synths[note].triggerAttack(midiToFreq(note), 0.2);
                 this.currently_sounding.add(note);
             }
         }
