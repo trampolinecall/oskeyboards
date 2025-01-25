@@ -154,10 +154,28 @@ function draw() {
     key1.draw(key1.get_hovered_key(mouseX, mouseY));
     key2.draw(key2.get_hovered_key(mouseX, mouseY));
     key3.draw(key3.get_hovered_key(mouseX, mouseY));
+}
 
+function update_all_touches() {
     key1.update_touches(touches);
     key2.update_touches(touches);
     key3.update_touches(touches);
+}
+
+function mousePressed() {
+    update_all_touches();
+}
+function mouseReleased() {
+    update_all_touches();
+}
+function touchStarted() {
+    update_all_touches();
+}
+function touchMoved() {
+    update_all_touches();
+}
+function touchEnded() {
+    update_all_touches();
 }
 
 function is_black_key(key_number) {
