@@ -1,11 +1,11 @@
 const BLACK_KEY_HEIGHT_PCT = 0.6;
 
 class Keyboard {
-    constructor(start_y, end_y, offset) {
+    constructor(start_y, end_y, pitch_shift) {
         this.start_y = start_y;
         this.end_y = end_y;
         this.height = this.end_y - this.start_y;
-        this.offset = offset;
+        this.pitch_shift = pitch_shift;
         this.currently_sounding = new Set();
         this.synths = {};
         for (let key = Math.floor(this.left_key()); key <= Math.ceil(this.right_key()); ++key) {
@@ -14,10 +14,10 @@ class Keyboard {
     }
 
     left_key() {
-        return left_key + this.offset;
+        return left_key - this.pitch_shift;
     }
     right_key() {
-        return right_key + this.offset;
+        return right_key - this.pitch_shift;
     }
 
     draw(highlights) {
@@ -121,7 +121,7 @@ class Keyboard {
 
         for (let note of should_be_sounding) {
             if (!this.currently_sounding.has(note)) {
-                this.synths[note].triggerAttack(midiToFreq(note), 0.2);
+                this.synths[note].triggerAttack(midiToFreq(note) * Math.pow(2, this.pitch_shift / 12), 0.2);
                 this.currently_sounding.add(note);
             }
         }
@@ -143,9 +143,9 @@ function setup() {
 
     userStartAudio();
 
-    key1 = new Keyboard(0, height / 3, 0);
-    key2 = new Keyboard(height / 3, height * 2 / 3, 1/3);
-    key3 = new Keyboard(height * 2 / 3, height, 2/3);
+    key1 = new Keyboard(0, height / 3, 1/3);
+    key2 = new Keyboard(height / 3, height * 2 / 3, 0/3);
+    key3 = new Keyboard(height * 2 / 3, height, -1/3);
 }
 
 function draw() {
