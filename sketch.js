@@ -20,7 +20,7 @@ class Keyboard {
         return right_key + this.offset;
     }
 
-    draw(highlight) {
+    draw(highlights) {
         let key_width_top = width / (right_key - left_key);
         let black_key_height = this.height * BLACK_KEY_HEIGHT_PCT
 
@@ -28,10 +28,10 @@ class Keyboard {
             let left_x = map(key, this.left_key(), this.right_key(), 0, width);
 
             if (is_black_key(key)) {
-                fill(key == highlight ? "orange" : "black");
+                fill(highlights.includes(key) ? "orange" : "black");
                 rect(left_x, this.start_y, key_width_top, black_key_height);
             } else {
-                fill(key == highlight ? "red" : "white");
+                fill(highlights.includes(key) ? "red" : "white");
 
                 let left_extension = is_black_key(key - 1);
                 let right_extension = is_black_key(key + 1);
@@ -151,9 +151,15 @@ function setup() {
 function draw() {
     background(220);
 
-    key1.draw(key1.get_hovered_key(mouseX, mouseY));
-    key2.draw(key2.get_hovered_key(mouseX, mouseY));
-    key3.draw(key3.get_hovered_key(mouseX, mouseY));
+    let all_touches_and_mouse = [];
+    for (let touch of touches) {
+        all_touches_and_mouse.push([touch.x, touch.y]);
+    }
+    all_touches_and_mouse.push([mouseX, mouseY]);
+
+    key1.draw(all_touches_and_mouse.map((t) => key1.get_hovered_key(t[0], t[1])));
+    key2.draw(all_touches_and_mouse.map((t) => key2.get_hovered_key(t[0], t[1])));
+    key3.draw(all_touches_and_mouse.map((t) => key3.get_hovered_key(t[0], t[1])));
 }
 
 function update_all_touches() {
